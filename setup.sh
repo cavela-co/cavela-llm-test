@@ -9,6 +9,10 @@ echo "=== Setting up Django Tasks App ==="
 echo "Installing dependencies with Poetry..."
 poetry install --no-interaction --no-root
 
+# Create media directory for uploads
+echo "Creating media directory for uploads..."
+mkdir -p media/uploads
+
 # Apply migrations
 echo "Applying database migrations..."
 poetry run python manage.py migrate --no-input

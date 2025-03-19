@@ -14,22 +14,70 @@
         h1 {
             color: #2c3e50;
         }
+        h2 {
+            color: #3498db;
+            margin-top: 30px;
+        }
         .api-url {
             background-color: #f8f9fa;
             padding: 10px;
             border-radius: 4px;
             font-family: monospace;
         }
+        .card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-title {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
     <h1>{{ title }}</h1>
-    <p>Welcome to our simple Django Tasks API. You can access the API at:</p>
-    <div class="api-url">/api/tasks/</div>
+    
+    <div class="card">
+        <h3 class="card-title">Tasks API</h3>
+        <p>Access the Tasks API at:</p>
+        <div class="api-url">/api/tasks/</div>
+        <a href="/api/tasks/" class="button">View Tasks API</a>
+    </div>
+    
+    <div class="card">
+        <h3 class="card-title">File Upload</h3>
+        <p>Upload and manage files:</p>
+        <a href="{% url 'upload_file' %}" class="button">Upload Files</a>
+        <a href="{% url 'file_list' %}" class="button">View Files</a>
+    </div>
+    
+    <div class="card">
+        <h3 class="card-title">Admin Interface</h3>
+        <p>Manage all data through the admin interface:</p>
+        <a href="/admin/" class="button">Go to Admin</a>
+    </div>
     
     <h2>API Endpoints</h2>
     <ul>
         <li><strong>GET /api/tasks/</strong> - Get all tasks</li>
+        <li><strong>GET /upload/</strong> - Upload files</li>
+        <li><strong>GET /files/</strong> - View all uploaded files</li>
     </ul>
 </body>
 </html> 

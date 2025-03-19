@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .files-container {
+            margin-top: 20px;
+        }
+        .file-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .file-title {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        .file-meta {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .file-description {
+            margin-bottom: 15px;
+        }
+        .file-link {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+        .file-link:hover {
+            background-color: #2980b9;
+        }
+        .nav {
+            margin-top: 20px;
+        }
+        .nav a {
+            color: #3498db;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+        .empty-message {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    
+    <div class="files-container">
+        {% if files %}
+            {% for file in files %}
+                <div class="file-card">
+                    <h2 class="file-title">{{ file.title }}</h2>
+                    <div class="file-meta">Uploaded on {{ file.uploaded_at|date:"F j, Y, g:i a" }}</div>
+                    {% if file.description %}
+                        <div class="file-description">{{ file.description }}</div>
+                    {% endif %}
+                    <a href="{{ file.file.url }}" class="file-link" target="_blank">Download File</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-message">
+                <p>No files have been uploaded yet.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="nav">
+        <a href="{% url 'upload_file' %}">Upload New File</a>
+        <a href="{% url 'home' %}">Back to Home</a>
+    </div>
+</body>
+</html> 
