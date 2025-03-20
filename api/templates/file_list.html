@@ -62,6 +62,50 @@
             border-radius: 8px;
             text-align: center;
         }
+        .questions-section {
+            margin-top: 15px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .questions-heading {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .questions-list {
+            list-style-type: decimal;
+            margin: 0;
+            padding-left: 20px;
+        }
+        .questions-list li {
+            margin-bottom: 5px;
+        }
+        .no-questions {
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .question-input {
+            display: flex;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .question-input input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+        .btn-add {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .btn-add:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -70,12 +114,35 @@
     <div class="files-container">
         {% if files %}
             {% for file in files %}
-                <div class="file-card">
+                <div class="file-card" id="file-{{ file.id }}">
                     <h2 class="file-title">{{ file.title }}</h2>
                     <div class="file-meta">Uploaded on {{ file.uploaded_at|date:"F j, Y, g:i a" }}</div>
                     {% if file.description %}
                         <div class="file-description">{{ file.description }}</div>
                     {% endif %}
+                    
+                    <!-- Display questions section -->
+                    <div class="questions-section">
+                        <div class="questions-heading">Questions:</div>
+                        <div class="questions-list-container" id="questions-list-{{ file.id }}">
+                            {% if file.questions %}
+                                <ul class="questions-list">
+                                    {% for question in file.questions %}
+                                        <li>{{ question }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <div class="no-questions">No questions added for this file.</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Add question form -->
+                        <div class="question-input">
+                            <input type="text" placeholder="Add a question" id="new-question-{{ file.id }}">
+                            <button class="btn-add" onclick="addQuestion({{ file.id }})">Add</button>
+                        </div>
+                    </div>
+                    
                     <a href="{{ file.file.url }}" class="file-link" target="_blank">Download File</a>
                 </div>
             {% endfor %}
@@ -90,5 +157,93 @@
         <a href="{% url 'upload_file' %}">Upload New File</a>
         <a href="{% url 'home' %}">Back to Home</a>
     </div>
+
+    <script>
+        // Function to add a question to a file
+        function addQuestion(fileId) {
+            const input = document.getElementById(`new-question-${fileId}`);
+            const question = input.value.trim();
+            
+            if (!question) return;
+            
+            // Send the question to the server
+            fetch(`/api/add_question/${fileId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    question: question
+                })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    // Update the questions list
+                    const questionsContainer = document.getElementById(`questions-list-${fileId}`);
+                    
+                    // Check if there's a "no questions" message
+                    const noQuestions = questionsContainer.querySelector('.no-questions');
+                    if (noQuestions) {
+                        // Remove the "no questions" message and create a new list
+                        questionsContainer.innerHTML = '<ul class="questions-list"></ul>';
+                    }
+                    
+                    // Get the questions list or create it
+                    let questionsList = questionsContainer.querySelector('.questions-list');
+                    if (!questionsList) {
+                        questionsList = document.createElement('ul');
+                        questionsList.className = 'questions-list';
+                        questionsContainer.appendChild(questionsList);
+                    }
+                    
+                    // Add the new question
+                    const listItem = document.createElement('li');
+                    listItem.textContent = question;
+                    questionsList.appendChild(listItem);
+                    
+                    // Clear the input
+                    input.value = '';
+                }
+            })
+            .catch(function(error) {
+                console.error('Error adding question:', error);
+            });
+        }
+        
+        // Function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Add event listeners for Enter key on all question inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            {% for file in files %}
+            const inputField{{ file.id }} = document.getElementById(`new-question-{{ file.id }}`);
+            if (inputField{{ file.id }}) {
+                inputField{{ file.id }}.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addQuestion({{ file.id }});
+                    }
+                });
+            }
+            {% endfor %}
+        });
+    </script>
 </body>
 </html> 
