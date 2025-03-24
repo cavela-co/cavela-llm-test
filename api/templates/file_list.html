@@ -110,7 +110,7 @@
 </head>
 <body>
     <h1>{{ title }}</h1>
-    
+
     <div class="files-container">
         {% if files %}
             {% for file in files %}
@@ -120,7 +120,7 @@
                     {% if file.description %}
                         <div class="file-description">{{ file.description }}</div>
                     {% endif %}
-                    
+
                     <!-- Display questions section -->
                     <div class="questions-section">
                         <div class="questions-heading">Questions:</div>
@@ -135,14 +135,14 @@
                                 <div class="no-questions">No questions added for this file.</div>
                             {% endif %}
                         </div>
-                        
+
                         <!-- Add question form -->
                         <div class="question-input">
                             <input type="text" placeholder="Add a question" id="new-question-{{ file.id }}">
                             <button class="btn-add" onclick="addQuestion({{ file.id }})">Add</button>
                         </div>
                     </div>
-                    
+
                     <a href="{{ file.file.url }}" class="file-link" target="_blank">Download File</a>
                 </div>
             {% endfor %}
@@ -152,7 +152,7 @@
             </div>
         {% endif %}
     </div>
-    
+
     <div class="nav">
         <a href="{% url 'upload_file' %}">Upload New File</a>
         <a href="{% url 'home' %}">Back to Home</a>
@@ -163,9 +163,9 @@
         function addQuestion(fileId) {
             const input = document.getElementById(`new-question-${fileId}`);
             const question = input.value.trim();
-            
+
             if (!question) return;
-            
+
             // Send the question to the server
             fetch(`/api/add_question/${fileId}/`, {
                 method: 'POST',
@@ -184,14 +184,14 @@
                 if (data.success) {
                     // Update the questions list
                     const questionsContainer = document.getElementById(`questions-list-${fileId}`);
-                    
+
                     // Check if there's a "no questions" message
                     const noQuestions = questionsContainer.querySelector('.no-questions');
                     if (noQuestions) {
                         // Remove the "no questions" message and create a new list
                         questionsContainer.innerHTML = '<ul class="questions-list"></ul>';
                     }
-                    
+
                     // Get the questions list or create it
                     let questionsList = questionsContainer.querySelector('.questions-list');
                     if (!questionsList) {
@@ -199,12 +199,12 @@
                         questionsList.className = 'questions-list';
                         questionsContainer.appendChild(questionsList);
                     }
-                    
+
                     // Add the new question
                     const listItem = document.createElement('li');
                     listItem.textContent = question;
                     questionsList.appendChild(listItem);
-                    
+
                     // Clear the input
                     input.value = '';
                 }
@@ -213,7 +213,7 @@
                 console.error('Error adding question:', error);
             });
         }
-        
+
         // Function to get CSRF token
         function getCookie(name) {
             let cookieValue = null;
@@ -229,7 +229,7 @@
             }
             return cookieValue;
         }
-        
+
         // Add event listeners for Enter key on all question inputs
         document.addEventListener('DOMContentLoaded', function() {
             {% for file in files %}
@@ -246,4 +246,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
