@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import Task, UploadedFile
 from .forms import FileUploadForm
@@ -44,36 +44,3 @@ def upload_file(request):
 def file_list(request):
     files = UploadedFile.objects.all().order_by("-uploaded_at")
     return render(request, "file_list.html", {"files": files, "title": "Uploaded Files"})
-
-
-def add_question(request, file_id):
-    if request.method == "POST":
-        try:
-            # Parse the JSON data
-            data = json.loads(request.body)
-            question = data.get("question", "").strip()
-
-            if not question:
-                return JsonResponse({"success": False, "error": "Question is required"}, status=400)
-
-            # Get the file object
-            file_obj = get_object_or_404(UploadedFile, id=file_id)
-
-            # Initialize questions list if not exists
-            if not file_obj.questions:
-                file_obj.questions = []
-
-            # Add the new question
-            file_obj.questions.append(question)
-
-            # Save the file object
-            file_obj.save()
-
-            return JsonResponse({"success": True})
-
-        except json.JSONDecodeError:
-            return JsonResponse({"success": False, "error": "Invalid JSON data"}, status=400)
-        except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=500)
-
-    return JsonResponse({"success": False, "error": "Method not allowed"}, status=405)
