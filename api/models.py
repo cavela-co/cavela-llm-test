@@ -28,6 +28,13 @@ class Quotation(models.Model):
     shipping_method = models.CharField(max_length=200)
     shipping_address = models.TextField()
 
+    @classmethod
+    def estimate_shipping_time_days(cls, shipping_method, shipping_address):
+        if shipping_method == "sea":
+            return 30
+        elif shipping_method == "air":
+            return 7
+
 
 class Task(models.Model):
     title = models.CharField(max_length=200)
