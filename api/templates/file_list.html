@@ -121,28 +121,6 @@
                         <div class="file-description">{{ file.description }}</div>
                     {% endif %}
 
-                    <!-- Display questions section -->
-                    <div class="questions-section">
-                        <div class="questions-heading">Questions:</div>
-                        <div class="questions-list-container" id="questions-list-{{ file.id }}">
-                            {% if file.questions %}
-                                <ul class="questions-list">
-                                    {% for question in file.questions %}
-                                        <li>{{ question }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <div class="no-questions">No questions added for this file.</div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Add question form -->
-                        <div class="question-input">
-                            <input type="text" placeholder="Add a question" id="new-question-{{ file.id }}">
-                            <button class="btn-add" onclick="addQuestion({{ file.id }})">Add</button>
-                        </div>
-                    </div>
-
                     <a href="{{ file.file.url }}" class="file-link" target="_blank">Download File</a>
                 </div>
             {% endfor %}
@@ -159,61 +137,6 @@
     </div>
 
     <script>
-        // Function to add a question to a file
-        function addQuestion(fileId) {
-            const input = document.getElementById(`new-question-${fileId}`);
-            const question = input.value.trim();
-
-            if (!question) return;
-
-            // Send the question to the server
-            fetch(`/api/add_question/${fileId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify({
-                    question: question
-                })
-            })
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(data) {
-                if (data.success) {
-                    // Update the questions list
-                    const questionsContainer = document.getElementById(`questions-list-${fileId}`);
-
-                    // Check if there's a "no questions" message
-                    const noQuestions = questionsContainer.querySelector('.no-questions');
-                    if (noQuestions) {
-                        // Remove the "no questions" message and create a new list
-                        questionsContainer.innerHTML = '<ul class="questions-list"></ul>';
-                    }
-
-                    // Get the questions list or create it
-                    let questionsList = questionsContainer.querySelector('.questions-list');
-                    if (!questionsList) {
-                        questionsList = document.createElement('ul');
-                        questionsList.className = 'questions-list';
-                        questionsContainer.appendChild(questionsList);
-                    }
-
-                    // Add the new question
-                    const listItem = document.createElement('li');
-                    listItem.textContent = question;
-                    questionsList.appendChild(listItem);
-
-                    // Clear the input
-                    input.value = '';
-                }
-            })
-            .catch(function(error) {
-                console.error('Error adding question:', error);
-            });
-        }
-
         // Function to get CSRF token
         function getCookie(name) {
             let cookieValue = null;
