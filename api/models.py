@@ -2,7 +2,7 @@ from django.db import models
 
 
 class FileType(models.TextChoices):
-    QUOATATION = "QUOATATION"
+    QUOTATION = "QUOTATION"
     PROD_SPEC = "PROD_SPEC"
     QA_REPORT = "QA_REPORT"
     OTHER = "OTHER"
