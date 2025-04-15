@@ -1,13 +1,7 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from .models import Task, UploadedFile
+from .models import UploadedFile
 from .forms import FileUploadForm
 import json
-
-
-def task_list(request):
-    tasks = Task.objects.all().values("id", "title", "description", "completed", "created_at")
-    return JsonResponse(list(tasks), safe=False)
 
 
 def home(request):
